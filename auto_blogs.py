@@ -5,6 +5,7 @@ from openai import OpenAI
 import shopify
 import json
 import random
+import time
 from datetime import datetime
 
 # Configure your Shopify credentials from environment variables
