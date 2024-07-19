@@ -1,3 +1,4 @@
+import os
 import requests
 import feedparser
 from openai import OpenAI
@@ -6,13 +7,13 @@ import json
 import random
 from datetime import datetime
 
-# Configure your Shopify credentials
+# Configure your Shopify credentials from environment variables
 SHOP_NAME = os.getenv('SHOP_NAME')
-ADMIN_API_ACCESS_TOKEN =  os.getenv('ADMIN_API_ACCESS_TOKEN') # Your Admin API access token
+ADMIN_API_ACCESS_TOKEN = os.getenv('ADMIN_API_ACCESS_TOKEN')  # Your Admin API access token
+
 # OpenAI API key
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=OPENAI_API_KEY)
-
 # List of RSS feeds for movies and anime
 RSS_FEEDS = [
     'https://www.animenewsnetwork.com/news/rss.xml',
@@ -48,20 +49,17 @@ def fetch_latest_news():
 
 # Generate a catchy and controversial review using OpenAI
 def generate_review(title, summary):
-    openai.api_key = OPENAI_API_KEY
     prompt = (f"Write a catchy, controversial, and SEO-friendly review with emojis for the following article to persuade "
               f"people to buy cosplay costumes. The review should be engaging and include a call to action to "
               f"buy costumes from our store.\n\nTitle: {title}\nSummary: {summary}")
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a marketing copywriter who loves using emojis."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=500
-    )
-    review = response.choices[0].message['content'].strip()
+
+    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a marketing copywriter who loves using emojis."},
+        {"role": "user", "content": prompt}
+    ],
+    max_tokens=500)
+    review = response.choices[0].message.content.strip()
     return review
 
 # Get the blog ID for the "news" blog
@@ -108,7 +106,7 @@ def check_existing_posts(title):
 def main():
     articles = fetch_latest_news()
     news_blog_id = get_news_blog_id()
-    for article in articles:
+    for article in articles[:2]:
         if not check_existing_posts(article['title']):
             review = generate_review(article['title'], article['summary'])
             content = f"<p>{review}</p><p>Check out our exclusive <a href='https://abccoser.com/collections/all'>cosplay costumes</a>! 🎭👗</p>"
