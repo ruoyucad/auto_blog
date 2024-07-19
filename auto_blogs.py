@@ -64,16 +64,20 @@ def generate_review(title, summary):
     return review
 
 # Get the blog ID for the "news" blog
-def get_news_blog_id():
-    try:
-        blogs = shopify.Blog.find()
-        for blog in blogs:
-            if blog.title.lower() == 'news':
-                return blog.id
-        raise Exception('News blog not found')
-    except Exception as e:
-        print(f"Error fetching blogs: {e}")
-        raise
+def get_news_blog_id(retries=3):
+    for attempt in range(retries):
+        try:
+            blogs = shopify.Blog.find()
+            for blog in blogs:
+                if blog.title.lower() == 'news':
+                    return blog.id
+            raise Exception('News blog not found')
+        except Exception as e:
+            print(f"Error fetching blogs (attempt {attempt + 1} of {retries}): {e}")
+            if attempt < retries - 1:
+                time.sleep(5)  # Wait for 5 seconds before retrying
+            else:
+                raise
 
 # Create a blog post on Shopify
 def create_blog_post(title, content, blog_id):
