@@ -15,6 +15,7 @@ ADMIN_API_ACCESS_TOKEN = os.getenv('ADMIN_API_ACCESS_TOKEN')  # Your Admin API a
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=OPENAI_API_KEY)
 # List of RSS feeds for movies and anime
+# List of RSS feeds for movies and anime
 RSS_FEEDS = [
     'https://www.animenewsnetwork.com/news/rss.xml',
     'https://rss.nytimes.com/services/xml/rss/nyt/Movies.xml',
