@@ -26,7 +26,7 @@ RSS_FEEDS = [
 
 # Set up Shopify session
 shop_url = f"https://{SHOP_NAME}.myshopify.com/admin"
-session = shopify.Session(shop_url, version="2023-01", token=PASSWORD)
+session = shopify.Session(shop_url, version="2023-01", token=ADMIN_API_ACCESS_TOKEN)
 shopify.ShopifyResource.activate_session(session)
 
 # Fetch latest news from RSS feeds
